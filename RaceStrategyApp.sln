@@ -5,6 +5,10 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaceStrategyApp", "RaceStrategyApp\RaceStrategyApp.csproj", "{DC6C0C0F-B221-4AEA-A589-4D74ECAB7CC6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaceStrategyApp.Services", "RaceStrategyApp.Services\RaceStrategyApp.Services.csproj", "{8BF90E50-9AA4-4598-821E-A425AA5313A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaceStrategyApp.Services.Tests", "RaceStrategyApp.Services.Tests\RaceStrategyApp.Services.Tests.csproj", "{180126A9-7A54-45A6-BDC4-C8D37DCBB77B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{DC6C0C0F-B221-4AEA-A589-4D74ECAB7CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC6C0C0F-B221-4AEA-A589-4D74ECAB7CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC6C0C0F-B221-4AEA-A589-4D74ECAB7CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BF90E50-9AA4-4598-821E-A425AA5313A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BF90E50-9AA4-4598-821E-A425AA5313A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BF90E50-9AA4-4598-821E-A425AA5313A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BF90E50-9AA4-4598-821E-A425AA5313A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180126A9-7A54-45A6-BDC4-C8D37DCBB77B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180126A9-7A54-45A6-BDC4-C8D37DCBB77B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180126A9-7A54-45A6-BDC4-C8D37DCBB77B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180126A9-7A54-45A6-BDC4-C8D37DCBB77B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
