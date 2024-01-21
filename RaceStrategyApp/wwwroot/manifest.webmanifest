@@ -1,6 +1,6 @@
 {
-  "name": "RaceStrategyApp",
-  "short_name": "RaceStrategyApp",
+  "name": "Sim Race Strategy | Fuel Calculator",
+  "short_name": "Fuel Calculator",
   "id": "./",
   "start_url": "./",
   "display": "standalone",
