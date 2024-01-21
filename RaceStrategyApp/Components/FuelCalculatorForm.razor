@@ -1,0 +1,115 @@
+﻿@using RaceStrategyApp.Models
+@using RaceStrategyApp.Services
+@using RaceStrategyApp.Services.Models
+@inject IFuelCalculatorService FuelCalculatorService
+
+<EditForm Model="FormModel" OnSubmit="HandleFormSubmit" class="shadow-sm p-3 mb-5 bg-body rounded">
+    <div class="mb-3">
+        <label class="form-label">Average lap time</label>
+        <div class="row g-3">
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapMinutes" id="lapMinutes" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+                    <label for="lapMinutes">minutes</label>
+        
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapSeconds" id="lapSeconds" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+                    <label for="lapSeconds">seconds</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapMiliseconds" id="lapMiliseconds" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+                    <label for="lapMiliseconds">miliseconds</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+    <label class="form-label">Race Time</label>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.StintHours" id="stintHours" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+                    <label for="stintHours">hours</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.StintMinutes" id="stintMinutes" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+                    <label for="stintMinutes">minutes</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Fuel</label>
+        <div class="form-floating">
+            <InputNumber @bind-Value="FormModel.LitersPerLap" id="liters" class="form-control" min="0" @onkeyup="HandleFormSubmit" />
+            <label for="liters">liters per lap</label>
+        </div>
+    </div>
+    <div class="form-check mb-3">
+        <InputCheckbox @bind-Value="FormModel.HasFormationLap" class="form-check-input" id="formationLap" @onclick="HandleFormSubmit" />
+        <label class="form-check-label" for="formationLap">
+            Formation Lap
+        </label>
+    </div>
+    
+    <div class="mb-3">
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary" @onclick="HandleFormSubmit">Calculate</button>
+        </div>
+    </div>
+    <div class="mb-3">
+        <div class="text-end">
+            <button class="btn btn-danger" @onclick="ClearForm">Clear</button>
+        </div>
+    </div>
+</EditForm>
+
+<div class="shadow-sm p-3 mb-5 bg-body rounded">
+    <div class="row g-3">
+        <div class="col-md">
+            <h3>Estimated Laps: @EstimatedLaps</h3>
+        </div>
+        <div class="col-md">
+            <h3>Estimated Fuel: @FuelNeeded</h3>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public FuelCalculatorFormModel FormModel { get; set; } = new();
+    public int EstimatedLaps { get; set; }
+    public int FuelNeeded { get; set; }
+    public int LapMinutes { get; set; }
+
+    public void HandleFormSubmit()
+    {
+        var fuelCalculatorInputs = new FuelCalculatorInputs(
+            FormModel.LapMinutes,
+            FormModel.LapSeconds,
+            FormModel.LapMiliseconds,
+            FormModel.LitersPerLap,
+            FormModel.StintHours,
+            FormModel.StintMinutes,
+            FormModel.HasFormationLap
+        );
+
+        var result = FuelCalculatorService.CalculateFuel(fuelCalculatorInputs);
+        EstimatedLaps = result.EstimatedLaps;
+        FuelNeeded = result.FuelNeeded;
+    }
+
+    public void ClearForm()
+    {
+        this.FormModel = new FuelCalculatorFormModel();
+        this.EstimatedLaps = 0;
+        this.FuelNeeded = 0;
+    }
+}
