@@ -1,10 +1,10 @@
 ﻿namespace RaceStrategyApp.Services.Models
 {
-    public class StintTime
+    public class RaceTime
     {
         public int RaceLengthInSeconds { get; } = 0;
 
-        public StintTime(int hours, int minutes)
+        public RaceTime(int hours, int minutes)
         {
             if (hours > 0)
             {

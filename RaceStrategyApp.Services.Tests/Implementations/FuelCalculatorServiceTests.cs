@@ -1,11 +1,7 @@
-﻿using RaceStrategyApp.Services.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RaceStrategyApp.Services.Implementations;
+using RaceStrategyApp.Services.Models;
 
-namespace RaceStrategyApp.Services.Tests
+namespace RaceStrategyApp.Services.Tests.Implementations
 {
     [TestClass]
     public class FuelCalculatorServiceTests

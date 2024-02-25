@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using RaceStrategyApp;
-using RaceStrategyApp.Services;
+using RaceStrategyApp.Services.Implementations;
+using RaceStrategyApp.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
