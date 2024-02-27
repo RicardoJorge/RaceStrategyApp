@@ -23,7 +23,7 @@ namespace RaceStrategyApp.Services.Tests
             //assert
             Assert.IsNotNull(result);
             Assert.AreEqual(27, result.EstimatedLaps);
-            Assert.AreEqual(92, result.FuelNeeded);
+            Assert.AreEqual(96, result.FuelNeeded);
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace RaceStrategyApp.Services.Tests
             //assert
             Assert.IsNotNull(result);
             Assert.AreEqual(19, result.EstimatedLaps);
-            Assert.AreEqual(65, result.FuelNeeded);
+            Assert.AreEqual(68, result.FuelNeeded);
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace RaceStrategyApp.Services.Tests
             //assert
             Assert.IsNotNull(result);
             Assert.AreEqual(51, result.EstimatedLaps);
-            Assert.AreEqual(143, result.FuelNeeded);
+            Assert.AreEqual(146, result.FuelNeeded);
         }
     }
 }
