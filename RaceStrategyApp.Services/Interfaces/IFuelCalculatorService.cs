@@ -1,6 +1,6 @@
 ﻿using RaceStrategyApp.Services.Models;
 
-namespace RaceStrategyApp.Services
+namespace RaceStrategyApp.Services.Interfaces
 {
     public interface IFuelCalculatorService
     {
