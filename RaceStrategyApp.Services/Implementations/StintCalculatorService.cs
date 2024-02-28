@@ -25,13 +25,32 @@ namespace RaceStrategyApp.Services.Implementations
                 startingFuel = CalculateStartingFuelConsideringFormationLap(inputs.HasFormationLap, inputs.LitersPerLap, estimatedFuelPerStint);
             }
 
-            var numberOfPitStops = CalculatePitstops(inputs.RaceTime.RaceLengthInSeconds, estimatedStintLengthInSeconds);
+            if (CanRaceBeDoneInOneStint(inputs.RaceTime.RaceLengthInSeconds, estimatedStintLengthInSeconds))
+            {
+                var raceLaps = CalculateLapsToEndTheRace(inputs.LapTime.TotalSeconds, inputs.RaceTime.RaceLengthInSeconds);
+                return new StintCalculatorResult(
+                    raceLaps - 1,
+                    CalculateFuel(raceLaps, inputs.LitersPerLap),
+                    Array.Empty<PitStop>()
+                );
+            }
+
+            var numberOfPitStops = CalculatePitstopCount(inputs.RaceTime.RaceLengthInSeconds, estimatedStintLengthInSeconds);
+
+            var pitstops = numberOfPitStops > 1
+                ? CalculatePitStops(estimatedLapsPerStint, estimatedStintLengthInSeconds, numberOfPitStops, estimatedFuelPerStint, inputs.RaceTime.RaceLengthInSeconds, inputs.LapTime.TotalSeconds, inputs.LitersPerLap, inputs.TankSize, inputs.HasFormationLap)
+                : CalculateSinglePitstop(estimatedLapsPerStint, estimatedStintLengthInSeconds, estimatedFuelPerStint, inputs.RaceTime.RaceLengthInSeconds, inputs.LapTime.TotalSeconds, inputs.LitersPerLap, inputs.TankSize, inputs.HasFormationLap);
 
             return new StintCalculatorResult(
                     CalculateRaceLaps(inputs.RaceTime.RaceLengthInSeconds, inputs.LapTime.TotalSeconds, numberOfPitStops),
                     startingFuel,
-                    CalculatePitStops(estimatedLapsPerStint, estimatedStintLengthInSeconds, numberOfPitStops, estimatedFuelPerStint, inputs.RaceTime.RaceLengthInSeconds, inputs.LapTime.TotalSeconds, inputs.LitersPerLap, inputs.TankSize, inputs.HasFormationLap)
+                    pitstops
             );
+        }
+
+        private static bool CanRaceBeDoneInOneStint(double raceLengthInSeconds, double stintLimitInSeconds)
+        {
+            return raceLengthInSeconds < stintLimitInSeconds;
         }
 
         private static PitStop[] CalculatePitStops(int lapsInStint, double stintLengthInSeconds, int numberOfPitStops, int estimatedFuelPerStint, double raceLengthInSeconds, double lapTimeInSeconds, double litersPerLap, int tankSize, bool hasFormationLap)
@@ -47,8 +66,7 @@ namespace RaceStrategyApp.Services.Implementations
                     pitboard[i - 1].Lap + lapsInStint,
                     estimatedFuelPerStint);
             }
-
-            var timeLeftAfterLastPitStop = raceLengthInSeconds - pitboard[numberOfPitStops - 2].EleapsedTime.TotalSeconds - stintLengthInSeconds - AVERAGE_TIME_LOST_PITTING;
+            var timeLeftAfterLastPitStop = CalculateTimeLeftAfterLastPitStop(stintLengthInSeconds, raceLengthInSeconds, pitboard);
             int lapsLeftAfterLastPitstop = CalculateLapsToEndTheRace(lapTimeInSeconds, timeLeftAfterLastPitStop);
 
             pitboard[numberOfPitStops - 1] = new PitStop(
@@ -59,9 +77,44 @@ namespace RaceStrategyApp.Services.Implementations
             return pitboard;
         }
 
+        private static PitStop[] CalculateSinglePitstop(int lapsInStint, double stintLengthInSeconds, int estimatedFuelPerStint, double raceLengthInSeconds, double lapTimeInSeconds, double litersPerLap, int tankSize, bool hasFormationLap)
+        {
+            if (IsFormationLapOnAFullTank(estimatedFuelPerStint, tankSize, hasFormationLap))
+            {
+                stintLengthInSeconds -= lapTimeInSeconds;
+                --lapsInStint;
+            }
+
+            var timeLeftAfterLastPitStop = CalculateTimeLeftOnSingleStop(stintLengthInSeconds, raceLengthInSeconds);
+            int lapsLeftAfterLastPitstop = CalculateLapsToEndTheRace(lapTimeInSeconds, timeLeftAfterLastPitStop);
+
+            return
+            [
+                new PitStop(
+                    TimeSpan.FromSeconds(stintLengthInSeconds),
+                    lapsInStint - 1,
+                    CalculateFuel(lapsLeftAfterLastPitstop, litersPerLap))
+            ];
+        }
+
+        private static bool IsFormationLapOnAFullTank(int estimatedFuelPerStint, int tankSize, bool hasFormationLap)
+        {
+            return hasFormationLap && tankSize == estimatedFuelPerStint;
+        }
+
+        private static double CalculateTimeLeftOnSingleStop(double stintLengthInSeconds, double raceLengthInSeconds)
+        {
+            return raceLengthInSeconds - stintLengthInSeconds - AVERAGE_TIME_LOST_PITTING;
+        }
+
+        private static double CalculateTimeLeftAfterLastPitStop(double stintLengthInSeconds, double raceLengthInSeconds, PitStop[] pitboard)
+        {
+            return raceLengthInSeconds - pitboard[pitboard.Length - 2].EleapsedTime.TotalSeconds - stintLengthInSeconds - AVERAGE_TIME_LOST_PITTING;
+        }
+
         private static PitStop CalculateFirstStintConsideringFormationLap(bool hasFormationLap, double stintLengthInSeconds, int estimatedFuelPerStint, int tankSize, int lapsPerStint, double lapTimeInSeconds)
         {
-            if (hasFormationLap && tankSize == estimatedFuelPerStint)
+            if (IsFormationLapOnAFullTank(estimatedFuelPerStint, tankSize, hasFormationLap))
             {
                 return new PitStop(
                     TimeSpan.FromSeconds(stintLengthInSeconds - lapTimeInSeconds),
@@ -100,7 +153,7 @@ namespace RaceStrategyApp.Services.Implementations
             return CalculateLapsInAStint(lapTimeInSeconds, raceLengthInSeconds - AVERAGE_TIME_LOST_PITTING * numberOfPitStops);
         }
 
-        private static int CalculatePitstops(double raceLengthInSeconds, double stintLengthInSeconds)
+        private static int CalculatePitstopCount(double raceLengthInSeconds, double stintLengthInSeconds)
         {
             return (int)Math.Ceiling(raceLengthInSeconds / stintLengthInSeconds) - 1;
         }
