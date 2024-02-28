@@ -126,7 +126,7 @@ namespace RaceStrategyApp.Services.Tests.Implementations
         public void CalculateStint_KyalamiSampleThreeHour120LTank()
         {
             //arrange
-            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 3, 0, false, 120);
+            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 3, 0, false, 120, 0);
             var target = new StintCalculatorService();
 
             //act
@@ -149,7 +149,7 @@ namespace RaceStrategyApp.Services.Tests.Implementations
         public void CalculateStint_KyalamiSampleThreeHour120LTankWithFormationLap()
         {
             //arrange
-            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 3, 0, true, 120);
+            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 3, 0, true, 120, 0);
             var target = new StintCalculatorService();
 
             //act
@@ -169,10 +169,66 @@ namespace RaceStrategyApp.Services.Tests.Implementations
         }
 
         [TestMethod]
+        public void CalculateStint_KyalamiSample75minutes120LTankWithFormationLap()
+        {
+            //arrange
+            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 0, 75, true, 120, 0);
+            var target = new StintCalculatorService();
+
+            //act
+            var result = target.CalculateStint(inputs);
+
+            //assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(120, result.StartingFuel);
+            Assert.AreEqual(1, result.Pitboard.Length);
+            Assert.AreEqual(43, result.RaceLaps);
+            Assert.AreEqual(42, result.Pitboard[0].Lap);
+            Assert.AreEqual(3, result.Pitboard[0].Refuel);
+            Assert.AreEqual(4386, result.Pitboard[0].EleapsedTime.TotalSeconds);
+        }
+
+        [TestMethod]
+        public void CalculateStint_KyalamiSample60minutes120LTankWithFormationLap()
+        {
+            //arrange
+            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 0, 60, true, 120, 0);
+            var target = new StintCalculatorService();
+
+            //act
+            var result = target.CalculateStint(inputs);
+
+            //assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(97, result.StartingFuel);
+            Assert.AreEqual(0, result.Pitboard.Length);
+            Assert.AreEqual(35, result.RaceLaps);
+            Assert.AreEqual(Array.Empty<PitStop>(), result.Pitboard);
+        }
+
+        [TestMethod]
+        public void CalculateStint_KyalamiSample60minutes120LTankWithFormationLapStintLimitHigherThanRace()
+        {
+            //arrange
+            var inputs = new StintCalculatorInputs(1, 42, 0, 2.67, 0, 60, true, 120, 75);
+            var target = new StintCalculatorService();
+
+            //act
+            var result = target.CalculateStint(inputs);
+
+            //assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(97, result.StartingFuel);
+            Assert.AreEqual(0, result.Pitboard.Length);
+            Assert.AreEqual(35, result.RaceLaps);
+            Assert.AreEqual(Array.Empty<PitStop>(), result.Pitboard);
+        }
+
+        [TestMethod]
         public void CalculateStint_BathurstSample4h3FullTank()
         {
             //arrange
-            var inputs = new StintCalculatorInputs(2, 03, 0, 3.27, 4, 30, false, 120);
+            var inputs = new StintCalculatorInputs(2, 03, 0, 3.27, 4, 30, false, 120, 0);
             var target = new StintCalculatorService();
 
             //act
@@ -198,7 +254,7 @@ namespace RaceStrategyApp.Services.Tests.Implementations
         public void CalculateStint_BathurstSample4h3FullTankWithFormationLap()
         {
             //arrange
-            var inputs = new StintCalculatorInputs(2, 03, 0, 3.27, 4, 30, true, 120);
+            var inputs = new StintCalculatorInputs(2, 03, 0, 3.27, 4, 30, true, 120, 0);
             var target = new StintCalculatorService();
 
             //act
