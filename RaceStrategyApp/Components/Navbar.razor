@@ -1,0 +1,31 @@
+﻿@inject NavigationManager NavigationManager
+
+<ul class="nav justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link @(!NotHome ? "disabled" : "")" aria-disabled="@NotHome" href="/">Fuel Calculator</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(!NotStintCalculator ? "disabled" : "")" aria-disabled="@NotStintCalculator" href="/stint-calculator">Stint Calculator</a>
+    </li>
+</ul>
+
+@code {
+
+    [Parameter]
+    public string PageUri { get; set; }
+    public bool NotHome { get; set; } = true;
+    public bool NotStintCalculator { get; set; }
+
+    public Navbar() {}
+
+    public Navbar(string pageUri)
+    {
+        PageUri = pageUri;
+    }
+
+    protected override void OnInitialized()
+    {
+        NotHome = !PageUri.EndsWith("/");
+        NotStintCalculator = !PageUri.EndsWith("/stint-calculator");
+    }
+}
