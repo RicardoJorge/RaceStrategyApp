@@ -1,0 +1,165 @@
+﻿@using RaceStrategyApp.Services.Interfaces
+@using RaceStrategyApp.Models
+@using RaceStrategyApp.Services.Models
+@inject IStintCaluclatorService StintCalculatorService
+
+<EditForm Model="FormModel" OnSubmit="HandleFormSubmit" class="shadow-sm p-3 mb-5 bg-body rounded">
+    <div class="mb-3">
+        <label class="form-label">Average lap time</label>
+        <div class="row g-3">
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapMinutes" id="lapMinutes" class="form-control" min="0" />
+                    <label for="lapMinutes">minutes</label>
+        
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapSeconds" id="lapSeconds" class="form-control" min="0"  />
+                    <label for="lapSeconds">seconds</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LapMiliseconds" id="lapMiliseconds" class="form-control" min="0"  />
+                    <label for="lapMiliseconds">miliseconds</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+    <label class="form-label">Race Time</label>
+        <div class="row g-3">
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.RaceHours" id="stintHours" class="form-control" min="0"  />
+                    <label for="stintHours">hours</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.RaceMinutes" id="stintMinutes" class="form-control" min="0" />
+                    <label for="stintMinutes">minutes</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.StintLimit" id="stintLimit" class="form-control" min="0" />
+                    <label for="stintLimit">stint limit</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Fuel</label>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.LitersPerLap" id="liters" class="form-control" min="0" />
+                    <label for="liters">liters per lap</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <InputNumber @bind-Value="FormModel.TankSize" id="tankSize" class="form-control" min="0" />
+                    <label for="tankSize">tank size</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-check mb-3">
+        <InputCheckbox @bind-Value="FormModel.HasFormationLap" class="form-check-input" id="formationLap"  />
+        <label class="form-check-label" for="formationLap">
+            Formation Lap
+        </label>
+    </div>
+    
+    <div class="mb-3">
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary" @onclick="HandleFormSubmit">Calculate</button>
+        </div>
+    </div>
+    <div class="mb-3">
+        <div class="text-end">
+            <button class="btn btn-danger" @onclick="ClearForm">Clear</button>
+        </div>
+    </div>
+</EditForm>
+
+<div class="shadow-sm p-3 mb-5 bg-body rounded">
+    <div class="row g-3">
+        <div class="col-md">
+            <h3>Race Laps: @EstimatedLaps</h3>
+        </div>
+        <div class="col-md">
+            <h3>Starting Fuel: @FuelNeeded</h3>
+        </div>
+    </div>
+    
+</div>
+@if (Pitboard.Length > 0)
+{
+    <div class="shadow-sm p-3 mb-5 bg-body rounded">
+        <div class="row g-3">
+       
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Lap</th>
+                            <th scope="col">Eleapsed Time</th>
+                            <th scope="col">Refuel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Pitboard)
+                        {
+                            <tr>
+                                <td>@item.Lap</td>
+                                <td>@item.EleapsedTime.ToString()</td>
+                                <td>@item.Refuel</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+     
+        </div>
+    </div>
+}
+
+
+@code {
+    public StintCalculatorFormModel FormModel { get; set; } = new();
+    public int EstimatedLaps { get; set; }
+    public int FuelNeeded { get; set; }
+    public PitStop[] Pitboard { get; set; } = new PitStop[0];
+
+
+    public void HandleFormSubmit()
+    {
+        var inputs = new StintCalculatorInputs(
+            FormModel.LapMinutes,
+            FormModel.LapSeconds,
+            FormModel.LapMiliseconds,
+            FormModel.LitersPerLap,
+            FormModel.RaceHours,
+            FormModel.RaceMinutes,
+            FormModel.HasFormationLap,
+            FormModel.TankSize,
+            FormModel.StintLimit
+    );
+
+        var result = StintCalculatorService.CalculateStint(inputs);
+        EstimatedLaps = result.RaceLaps;
+        FuelNeeded = result.StartingFuel;
+        Pitboard = result.Pitboard;
+    }
+
+    public void ClearForm()
+    {
+        this.FormModel = new StintCalculatorFormModel();
+        this.EstimatedLaps = 0;
+        this.FuelNeeded = 0;
+        this.Pitboard = Array.Empty<PitStop>();
+    }
+}
